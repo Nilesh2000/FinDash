@@ -32,6 +32,7 @@ services:
       MB_DB_PASS: ${MB_DB_PASSWORD}
       MB_DB_HOST: ${MB_DB_HOST}
       JAVA_TIMEZONE: ${JAVA_TIMEZONE}
+      JAVA_OPTS: "-Xmx1g -Xms512m"
     ports:
       - "3000:3000"
     networks:
