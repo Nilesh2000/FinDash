@@ -1,0 +1,16 @@
+# macOS system files
+.DS_Store
+
+# Python
+__pycache__/
+.venv/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Database
+03-data.sql
+04-metabase_dump.sql
