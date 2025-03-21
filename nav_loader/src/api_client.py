@@ -13,3 +13,10 @@ class MfApiClient:
         response.raise_for_status()
         data = response.json().get("data", [])
         return data
+
+    def fetch_latest_nav(self, scheme_code: int) -> dict | None:
+        url = f"{self.base_url}/mf/{scheme_code}/latest"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json().get("data", [])
+        return data[0] if data else None
