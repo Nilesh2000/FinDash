@@ -16,6 +16,7 @@ TIMESTAMP=$(shell date +%Y%m%d%_H%M%S)
 .PHONY: backup
 
 backup:
+	@rm -f $(ENTRYPOINT_INITDB_DIR)/0[234]-*.sql
 	mkdir -p $(ENTRYPOINT_INITDB_DIR)
 	docker exec -it $(CONTAINER_NAME) pg_dump -U $(DB_USER) -d $(DB_NAME) --no-owner --no-privileges --schema-only >> $(PORTFOLIO_SCHEMA_FILE)
 	docker exec -it $(CONTAINER_NAME) pg_dump -U $(DB_USER) -d $(DB_NAME) --no-owner --no-privileges >> $(PORTFOLIO_DATA_FILE)
