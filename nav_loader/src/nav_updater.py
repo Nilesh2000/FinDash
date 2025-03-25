@@ -1,6 +1,7 @@
 from api_client import MfApiClient
 from database import Database
 from logger import get_logger
+from specific_nav_entries import SPECIFIC_NAV_ENTRIES
 
 logger = get_logger(__name__)
 
@@ -44,6 +45,9 @@ class NAVHistoryUpdater:
         scheme_codes = self.db.get_scheme_codes()
         for scheme_code in scheme_codes:
             self.update_scheme_nav_history(scheme_code)
+
+        for entry in SPECIFIC_NAV_ENTRIES:
+            self.db.insert_specific_nav(entry["scheme_code"], entry["date"], entry["nav"])
 
     def update_all_scheme_latest_nav(self):
         """Update latest NAV data for all schemes"""

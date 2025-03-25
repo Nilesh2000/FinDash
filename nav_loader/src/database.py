@@ -47,10 +47,19 @@ class Database:
                 nav_date = datetime.strptime(entry["date"], "%d-%m-%Y").date()
                 nav_value = float(entry["nav"])
                 cursor.execute(query, (mf_id, nav_date, nav_value))
-            self.conn.commit()
             logger.debug(
                 f"Inserted {len(nav_entries)} NAV entries for mutual fund {mf_id}"
             )
+
+    def insert_specific_nav(self, scheme_code: int, date: str, nav: float):
+        with self.conn.cursor() as cursor:
+            mf_id = self.get_mf_id(scheme_code)
+            if mf_id:
+                cursor.execute(
+                    "INSERT INTO nav_history (mf_id, date, nav) VALUES (%s, %s, %s)",
+                    (mf_id, date, nav),
+                )
+            self.conn.commit()
 
     def close(self):
         self.conn.close()
