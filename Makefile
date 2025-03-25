@@ -23,3 +23,9 @@ backup:
 	docker exec $(CONTAINER_NAME) pg_dump -U $(DB_USER) -d $(MB_DB_DBNAME) --no-owner --no-privileges | tee -a $(MB_FILE) > /dev/null
 
 	@echo "Backup completed successfully"
+
+up:
+	docker-compose up
+
+down:
+	docker-compose down -v
