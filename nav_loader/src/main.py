@@ -28,6 +28,7 @@ def main():
         if args.mode == "historical":
             logger.info("Updating historical NAV for all schemes")
             updater.update_all_scheme_nav_history()
+
         else:
             logger.info("Updating latest NAV for all schemes")
             updater.update_all_scheme_latest_nav()
