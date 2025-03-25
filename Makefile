@@ -14,7 +14,6 @@ MB_FILE=$(ENTRYPOINT_INITDB_DIR)/04-metabase_dump.sql
 .PHONY: backup up down
 
 backup:
-	@rm -f $(ENTRYPOINT_INITDB_DIR)/0[234]-*.sql
 	mkdir -p $(ENTRYPOINT_INITDB_DIR)
 	docker exec -it $(CONTAINER_NAME) pg_dump -U $(DB_USER) -d $(DB_NAME) --no-owner --no-privileges --schema-only >> $(PORTFOLIO_SCHEMA_FILE)
 	docker exec -it $(CONTAINER_NAME) pg_dump -U $(DB_USER) -d $(DB_NAME) --no-owner --no-privileges --data-only >> $(PORTFOLIO_DATA_FILE)
