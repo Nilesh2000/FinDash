@@ -12,5 +12,5 @@ __pycache__/
 *.log
 
 # Database
-03-data_*.sql
-04-metabase_dump_*.sql
+03-data.sql
+04-metabase_dump.sql
