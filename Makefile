@@ -11,7 +11,7 @@ PORTFOLIO_SCHEMA_FILE=$(ENTRYPOINT_INITDB_DIR)/02-schema.sql
 PORTFOLIO_DATA_FILE=$(ENTRYPOINT_INITDB_DIR)/03-data.sql
 MB_FILE=$(ENTRYPOINT_INITDB_DIR)/04-metabase_dump.sql
 
-.PHONY: backup
+.PHONY: backup up down
 
 backup:
 	@rm -f $(ENTRYPOINT_INITDB_DIR)/0[234]-*.sql
