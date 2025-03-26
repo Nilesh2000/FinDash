@@ -47,6 +47,7 @@ class Database:
                 nav_date = datetime.strptime(entry["date"], "%d-%m-%Y").date()
                 nav_value = float(entry["nav"])
                 cursor.execute(query, (mf_id, nav_date, nav_value))
+            self.conn.commit()
             logger.debug(
                 f"Inserted {len(nav_entries)} NAV entries for mutual fund {mf_id}"
             )
