@@ -23,11 +23,84 @@ SET row_security = off;
 
 CREATE FUNCTION public.set_updated_at() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
+    AS $$
+
+
+
+
+BEGIN
+
+
+
+
+    NEW.updated_at = NOW();
+
+
+
+
+    RETURN NEW;
+
+
+
+
+END;
+
+
+
+
+$$;
+
+
+--
+-- Name: xirr(numeric[], date[]); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.xirr(cashflows numeric[], dates date[]) RETURNS numeric
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  rate numeric := 0.1;         -- initial guess (10%)
+  tol numeric := 1e-6;         -- tolerance for convergence
+  max_iter int := 1000;        -- maximum iterations allowed
+  iter int := 0;
+  npv numeric;
+  d_npv numeric;
+  diff numeric;
+  t numeric;
+BEGIN
+  IF array_length(cashflows,1) IS NULL OR array_length(dates,1) IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  LOOP
+    npv := 0;
+    d_npv := 0;
+    -- Loop through each cash flow
+    FOR i IN 1 .. array_length(cashflows,1) LOOP
+      t := (dates[i] - dates[1]) / 365.0;  -- time difference in years
+      npv := npv + cashflows[i] / power(1 + rate, t);
+      -- Only add to the derivative if t is non-zero to avoid redundant zero terms
+      IF t <> 0 THEN
+         d_npv := d_npv - (t * cashflows[i]) / power(1 + rate, t + 1);
+      END IF;
+    END LOOP;
+    
+    diff := npv;
+    IF abs(diff) < tol OR iter > max_iter THEN
+      EXIT;
+    END IF;
+    
+    -- Check to avoid division by zero or extremely small derivative values
+    IF abs(d_npv) < tol THEN
+      RAISE NOTICE 'Derivative near zero; exiting loop with current rate: %', rate;
+      EXIT;
+    END IF;
+    
+    rate := rate - npv / d_npv;
+    iter := iter + 1;
+  END LOOP;
+  RETURN rate;
+END;
 $$;
 
 
