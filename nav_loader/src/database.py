@@ -57,7 +57,11 @@ class Database:
             mf_id = self.get_mf_id(scheme_code)
             if mf_id:
                 cursor.execute(
-                    "INSERT INTO nav_history (mf_id, date, nav) VALUES (%s, %s, %s)",
+                    """
+                    INSERT INTO nav_history (mf_id, date, nav)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (mf_id, date) DO NOTHING
+                    """,
                     (mf_id, date, nav),
                 )
             self.conn.commit()
