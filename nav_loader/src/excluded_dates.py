@@ -1,5 +1,3 @@
-from datetime import date
-
 # List of dates that should be excluded from NAV history
 # Format: YYYY-MM-DD
 EXCLUDED_DATES = [
