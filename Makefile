@@ -1,8 +1,6 @@
 CONTAINER_NAME=postgres
 
-DB_HOST=localhost
-DB_USER=postgres
-
+DB_USER=admin
 DB_NAME=portfolio
 MB_DB_DBNAME=metabase
 
