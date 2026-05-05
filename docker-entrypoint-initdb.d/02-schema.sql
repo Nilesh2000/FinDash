@@ -2,8 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4 (Debian 17.4-1.pgdg120+2)
--- Dumped by pg_dump version 17.4 (Debian 17.4-1.pgdg120+2)
+\restrict ulFmCQqeTJOmCUF8Nlz9PiQWgUGYaAxnodOOqpCK8XOi9QyRlDxL45N6KKZ1gXK
+
+-- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
+-- Dumped by pg_dump version 18.3 (Debian 18.3-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,84 +25,31 @@ SET row_security = off;
 
 CREATE FUNCTION public.set_updated_at() RETURNS trigger
     LANGUAGE plpgsql
-    AS $$
-
-
-
-
-BEGIN
-
-
-
-
-    NEW.updated_at = NOW();
-
-
-
-
-    RETURN NEW;
-
-
-
-
-END;
-
-
-
-
-$$;
-
-
---
--- Name: xirr(numeric[], date[]); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.xirr(cashflows numeric[], dates date[]) RETURNS numeric
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-  rate numeric := 0.1;         -- initial guess (10%)
-  tol numeric := 1e-6;         -- tolerance for convergence
-  max_iter int := 1000;        -- maximum iterations allowed
-  iter int := 0;
-  npv numeric;
-  d_npv numeric;
-  diff numeric;
-  t numeric;
-BEGIN
-  IF array_length(cashflows,1) IS NULL OR array_length(dates,1) IS NULL THEN
-    RETURN NULL;
-  END IF;
-
-  LOOP
-    npv := 0;
-    d_npv := 0;
-    -- Loop through each cash flow
-    FOR i IN 1 .. array_length(cashflows,1) LOOP
-      t := (dates[i] - dates[1]) / 365.0;  -- time difference in years
-      npv := npv + cashflows[i] / power(1 + rate, t);
-      -- Only add to the derivative if t is non-zero to avoid redundant zero terms
-      IF t <> 0 THEN
-         d_npv := d_npv - (t * cashflows[i]) / power(1 + rate, t + 1);
-      END IF;
-    END LOOP;
-    
-    diff := npv;
-    IF abs(diff) < tol OR iter > max_iter THEN
-      EXIT;
-    END IF;
-    
-    -- Check to avoid division by zero or extremely small derivative values
-    IF abs(d_npv) < tol THEN
-      RAISE NOTICE 'Derivative near zero; exiting loop with current rate: %', rate;
-      EXIT;
-    END IF;
-    
-    rate := rate - npv / d_npv;
-    iter := iter + 1;
-  END LOOP;
-  RETURN rate;
-END;
+    AS $$
+
+
+
+
+BEGIN
+
+
+
+
+    NEW.updated_at = NOW();
+
+
+
+
+    RETURN NEW;
+
+
+
+
+END;
+
+
+
+
 $$;
 
 
@@ -193,49 +142,6 @@ ALTER SEQUENCE public.nav_history_id_seq OWNED BY public.nav_history.id;
 
 
 --
--- Name: sips; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.sips (
-    id integer NOT NULL,
-    mf_id integer,
-    amount numeric(18,2) NOT NULL,
-    frequency text NOT NULL,
-    debit_day integer NOT NULL,
-    start_date date NOT NULL,
-    end_date date,
-    status text NOT NULL,
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone DEFAULT now(),
-    CONSTRAINT sips_amount_check CHECK ((amount > (0)::numeric)),
-    CONSTRAINT sips_check CHECK (((end_date IS NULL) OR (end_date > start_date))),
-    CONSTRAINT sips_debit_day_check CHECK (((debit_day >= 1) AND (debit_day <= 31))),
-    CONSTRAINT sips_frequency_check CHECK ((frequency = ANY (ARRAY['Monthly'::text, 'Quarterly'::text, 'Yearly'::text]))),
-    CONSTRAINT sips_status_check CHECK ((status = ANY (ARRAY['Active'::text, 'Paused'::text, 'Completed'::text, 'Cancelled'::text])))
-);
-
-
---
--- Name: sips_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.sips_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: sips_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.sips_id_seq OWNED BY public.sips.id;
-
-
---
 -- Name: transactions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -291,13 +197,6 @@ ALTER TABLE ONLY public.nav_history ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- Name: sips id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sips ALTER COLUMN id SET DEFAULT nextval('public.sips_id_seq'::regclass);
-
-
---
 -- Name: transactions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -345,14 +244,6 @@ ALTER TABLE ONLY public.nav_history
 
 
 --
--- Name: sips sips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sips
-    ADD CONSTRAINT sips_pkey PRIMARY KEY (id);
-
-
---
 -- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -368,26 +259,11 @@ CREATE TRIGGER trigger_update_mutual_funds BEFORE UPDATE ON public.mutual_funds 
 
 
 --
--- Name: sips trigger_update_sip; Type: TRIGGER; Schema: public; Owner: -
---
-
-CREATE TRIGGER trigger_update_sip BEFORE UPDATE ON public.sips FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
-
-
---
 -- Name: nav_history nav_history_mf_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.nav_history
     ADD CONSTRAINT nav_history_mf_id_fkey FOREIGN KEY (mf_id) REFERENCES public.mutual_funds(id) ON DELETE CASCADE;
-
-
---
--- Name: sips sips_mf_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sips
-    ADD CONSTRAINT sips_mf_id_fkey FOREIGN KEY (mf_id) REFERENCES public.mutual_funds(id) ON DELETE CASCADE;
 
 
 --
@@ -401,4 +277,6 @@ ALTER TABLE ONLY public.transactions
 --
 -- PostgreSQL database dump complete
 --
+
+\unrestrict ulFmCQqeTJOmCUF8Nlz9PiQWgUGYaAxnodOOqpCK8XOi9QyRlDxL45N6KKZ1gXK
 
