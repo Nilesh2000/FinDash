@@ -17,3 +17,6 @@ __pycache__/
 
 # pgAdmin
 pgadmin4_backup.db
+
+# Backups
+backups/
