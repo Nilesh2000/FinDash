@@ -31,6 +31,8 @@ services:
       - "5050:80"
     networks:
       - metanet
+    volumes:
+      - ./docker-entrypoint-initdb.d/pgadmin4_backup.db:/var/lib/pgadmin/pgadmin4.db
     depends_on:
       postgres:
         condition: service_healthy
