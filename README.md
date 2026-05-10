@@ -34,10 +34,6 @@ FinDash is a financial dashboard application that provides portfolio management 
    POSTGRES_PASSWORD=your_postgres_password
    POSTGRES_DB=portfolio
 
-   # pgAdmin Configuration
-   PGADMIN_DEFAULT_EMAIL=your_email@example.com
-   PGADMIN_DEFAULT_PASSWORD=your_pgadmin_password
-
    # Metabase Configuration
    MB_DB_TYPE=postgres
    MB_DB_DBNAME=metabase
@@ -57,13 +53,12 @@ FinDash is a financial dashboard application that provides portfolio management 
    ```
    or
    ```bash
-   docker-compose up
+   docker compose -f docker-compose.yaml -f docker-compose.local.yaml up
    ```
 
 4. Access the services:
    - Metabase: http://localhost:3000
-   - pgAdmin: http://localhost:5050
-   - PostgreSQL: localhost:5432
+   - PostgreSQL: localhost:5432 (from the host; Metabase uses the `postgres` service on the Docker network)
 
 ## Project Structure
 
@@ -82,6 +77,8 @@ FinDash/
 │   │   └── specific_nav_entries.py  # Manual NAV entries
 │   └── requirements.txt             # Python dependencies
 ├── docker-compose.yaml              # Docker Compose configuration
+├── docker-compose.local.yaml        # Publishes Metabase on localhost:3000 (used by `make up`)
+├── docker-compose.prod.yaml         # Production overrides + Caddy HTTP on :80 (see deploy/digitalocean/)
 ├── Makefile                         # Make commands
 ├── portfolio.sql                    # Portfolio database schema
 └── README.md                        # This file
@@ -89,9 +86,14 @@ FinDash/
 
 ## Available Commands
 
-- `make up`: Start all services
+- `make up`: Start all services (Metabase on http://localhost:3000)
 - `make down`: Stop all services and remove volumes
+- `make prod`: Production stack (Metabase on HTTP port 80 via Caddy; see `deploy/digitalocean/README.md`)
 - `make backup`: Create database backups
+
+## Production deployment (DigitalOcean)
+
+See [deploy/digitalocean/README.md](deploy/digitalocean/README.md) for a Droplet-based deployment using Docker Compose (HTTP on your Droplet’s IP, no domain required).
 
 ## NAV Loader Component
 

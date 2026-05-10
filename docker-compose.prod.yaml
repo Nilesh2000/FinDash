@@ -1,17 +1,7 @@
-# Production overrides for DigitalOcean (or any VPS).
-# Usage: docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
-#
-# Binds Postgres and pgAdmin to localhost only on the host.
-# Metabase is served on port 80 via Caddy (HTTP). Use http://<droplet-ip>/
-
 services:
   postgres:
     ports:
-      - "127.0.0.1:5432:5432"
-
-  pgadmin:
-    ports:
-      - "127.0.0.1:5050:80"
+      - "127.0.0.1:5433:5432"
 
   caddy:
     image: caddy:2-alpine

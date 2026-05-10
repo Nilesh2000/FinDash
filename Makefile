@@ -1,5 +1,4 @@
 POSTGRES_CONTAINER_NAME := postgres
-PGADMIN_CONTAINER_NAME  := pgadmin
 
 DB_USER      := admin
 DB_NAME      := portfolio
@@ -31,18 +30,15 @@ backup:
 	  pg_dump -U $(DB_USER) -d $(MB_DB_DBNAME) \
 	          --no-owner --no-privileges \
 	  | tee -a $(MB_FILE) "$${MB_BACKUP}" > /dev/null; \
-	echo "→ Copying pgAdmin database…"; \
-	docker cp $(PGADMIN_CONTAINER_NAME):/var/lib/pgadmin/pgadmin4.db \
-	  $(ENTRYPOINT_INITDB_DIR)/pgadmin4_backup.db; \
 	echo "✓ Backup complete"; \
 	echo "  Portfolio : $${DATA_BACKUP}"; \
 	echo "  Metabase  : $${MB_BACKUP}"
 
 up:
-	docker compose -f docker-compose.yaml -f docker-compose.local.yaml up
+	docker compose -f docker-compose.yaml up -d
 
 down:
-	docker compose -f docker-compose.yaml -f docker-compose.local.yaml down -v
+	docker compose -f docker-compose.yaml down -v
 
 prod:
 	docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d

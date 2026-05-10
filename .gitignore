@@ -15,8 +15,5 @@ __pycache__/
 03-data.sql
 04-metabase_dump.sql
 
-# pgAdmin
-pgadmin4_backup.db
-
 # Backups
 backups/

@@ -20,23 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - "127.0.0.1:5050:80"
-    networks:
-      - metanet
-    volumes:
-      - ./docker-entrypoint-initdb.d/pgadmin4_backup.db:/var/lib/pgadmin/pgadmin4.db
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   metabase:
     image: metabase/metabase:v0.60.3.8
     container_name: metabase
