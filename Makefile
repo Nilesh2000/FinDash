@@ -12,7 +12,7 @@ PORTFOLIO_DATA_FILE := $(ENTRYPOINT_INITDB_DIR)/03-data.sql
 MB_FILE             := $(ENTRYPOINT_INITDB_DIR)/04-metabase_dump.sql
 
 
-.PHONY: backup up down
+.PHONY: backup up down prod
 
 backup:
 	@mkdir -p $(ENTRYPOINT_INITDB_DIR) $(BACKUP_DIR)
@@ -39,7 +39,10 @@ backup:
 	echo "  Metabase  : $${MB_BACKUP}"
 
 up:
-	docker-compose up
+	docker compose -f docker-compose.yaml -f docker-compose.local.yaml up
 
 down:
-	docker-compose down -v
+	docker compose -f docker-compose.yaml -f docker-compose.local.yaml down -v
+
+prod:
+	docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
