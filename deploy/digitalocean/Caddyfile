@@ -1,0 +1,5 @@
+# HTTP only (no domain / no TLS). Open Metabase at http://YOUR_DROPLET_IP/
+:80 {
+	encode gzip
+	reverse_proxy metabase:3000
+}
