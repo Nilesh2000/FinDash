@@ -38,7 +38,7 @@ services:
         condition: service_healthy
 
   metabase:
-    image: metabase/metabase:latest
+    image: metabase/metabase:v0.60.3.8
     container_name: metabase
     restart: unless-stopped
     environment:
@@ -50,8 +50,6 @@ services:
       MB_DB_HOST: ${MB_DB_HOST}
       JAVA_TIMEZONE: ${JAVA_TIMEZONE}
       JAVA_OPTS: "-Xmx1g -Xms512m"
-    ports:
-      - "3000:3000"
     networks:
       - metanet
     depends_on:
