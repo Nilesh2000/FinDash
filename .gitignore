@@ -13,7 +13,7 @@ __pycache__/
 
 # Database
 03-data.sql
-04-metabase_dump.sql
+05-metabase_dump.sql
 
 # Backups
 backups/
